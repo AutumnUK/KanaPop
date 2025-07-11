@@ -14,31 +14,147 @@
 #include    "title/title_map.c"
 #include    "title/title_tiles.c"
 
-
-
 void logoAnimation( void ) {
-    vsync();  
     set_bkg_data(0,80,LogoTiles);
-    while(1){
+    while(1) {
                         set_bkg_tiles(0,0,20,18,LogoBackground1); 
         delay(500);     set_bkg_tiles(0,0,20,18,LogoBackground2); 
         delay(50);      set_bkg_tiles(0,0,20,18,LogoBackground3);
         delay(100);     set_bkg_tiles(0,0,20,18,LogoBackground4);
-        delay(1000);    set_bkg_tiles(0,0,20,18,LogoBackground5);   
+        delay(3000);    set_bkg_tiles(0,0,20,18,LogoBackground5);   
         delay(50);      set_bkg_tiles(0,0,20,18,LogoBackground6);
         delay(100);     set_bkg_tiles(0,0,20,18,LogoBackground7);   
-        delay(3000);
+        delay(1000);
         break;
     }
 }
 
-void main(void) {    
+void titleScreen( void ) {
+    set_bkg_data(0,80,TitleTiles);
+    set_bkg_tiles(0,0,20,18,TitleMap);
+    while(1){
+        uint8_t joy = joypad();
+        waitpad(J_START);
+        waitpadup();
+        return;
+    }
+}
+
+uint8_t game( void ) {
+    uint8_t seconds = 60;
+    uint8_t frames  = 60;
+    uint8_t lives   = 3;
+    uint8_t score   = 0;
+    uint8_t kana    = 0;
+
+    while(1) {
+        gotogxy(0,1);   gprintf("TIMER : %d", seconds);
+        gotogxy(11, 1); gprintf("LIVES : %d", lives);
+        gotogxy(1,1);   gprintf("SCORE : %d", score);
+
+        frames --;
+        if ( frames == 0 ) {
+            seconds --;
+            frames = 60;
+        }
+
+        if (frames == 0 && seconds == 0) {
+            return 1;
+        }
+    }
+}
+
+
+uint8_t mainMenu( void ) {
+    #define     MENU_START      1
+    #define     MENU_HISCORE    2
+    #define     MENU_OPTION     3
+
+    uint8_t     selection   =   MENU_START;
+
+    gotogxy(3,3);   
+    gprintf("start");
+    gotogxy(3,4);   
+    gprintf("hiscore");
+    gotogxy(3,5);   
+    gprintf("options");
+
+    while(1) {
+        uint8_t joy = joypad();
+
+        if (joy & J_UP)     { 
+            delay(200); 
+            selection --; 
+        }
+
+        if (joy & J_DOWN)   { 
+            delay(200); 
+            selection ++; 
+        }
+
+        if (selection == 0) { 
+            selection = 3; 
+        }
+
+        if (selection == 4) { 
+            selection = 1; 
+        }
+
+        if (selection == MENU_START) {
+                gotogxy(2,3);   
+                gprintf("x");
+                gotogxy(2,4);   
+                gprintf(" ");
+                gotogxy(2,5);   
+                gprintf(" ");
+                if (joy & J_A)     { 
+                    delay(200); 
+                    gotogxy(0,0);
+                    for (uint16_t i = 0; i < 360; i++) {
+                        gprintf( " " );
+                    }
+                    game();
+                }
+        }
+
+        if (selection == MENU_HISCORE) {
+                gotogxy(2,3);   
+                gprintf(" ");
+                gotogxy(2,4);   
+                gprintf("x");
+                gotogxy(2,5);   
+                gprintf(" ");
+        }
+ 
+        if (selection == MENU_OPTION) {
+                gotogxy(2,3);   
+                gprintf(" ");
+                gotogxy(2,4);   
+                gprintf(" ");
+                gotogxy(2,5);   
+                gprintf("x");
+        }
+
+    }
+}
+
+
+
+
+
+void main(void) { 
+    vsync();    
     SHOW_SPRITES;
     SHOW_BKG;
     DISPLAY_ON;   
     
     logoAnimation();
-    set_bkg_data(0,80,TitleTiles);
-    set_bkg_tiles(0,0,20,18,TitleMap);
-    delay(10000);
+    titleScreen();
+    switch (mainMenu()) {
+        case 1 :
+
+            
+            break;
+    }
+
 }
