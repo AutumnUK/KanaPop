@@ -46,11 +46,14 @@ uint8_t game( void ) {
     uint8_t lives   = 3;
     uint8_t score   = 0;
     uint8_t kana    = 0;
+    uint8_t highscore = 0;
 
     while(1) {
-        gotogxy(0,1);   gprintf("TIMER : %d", seconds);
-        gotogxy(11, 1); gprintf("LIVES : %d", lives);
-        gotogxy(1,1);   gprintf("SCORE : %d", score);
+        kana++;
+        gotogxy(0,0);   gprintf("TIMER : %d", seconds);
+        gotogxy(11, 0); gprintf("LIVES : %d", lives);
+        gotogxy(0,1);   gprintf("SCORE : %d", score);
+        gotogxy(11,1);  gprintf(" HIGH : %d", highscore);
 
         frames --;
         if ( frames == 0 ) {
@@ -61,6 +64,8 @@ uint8_t game( void ) {
         if (frames == 0 && seconds == 0) {
             return 1;
         }
+
+        
     }
 }
 
