@@ -1,6 +1,8 @@
 #include    "../Tools/GBDK/include/gb/gb.h"
 #include    "../Tools/GBDK/include/gb/drawing.h"
+#include    "../Tools/GBDK/include/rand.h"
 
+///////////////////////////////////////////////////////////////////////////
 
 #include    "logo/logo_tiles.c"
 #include    "logo/logo_background_1.c"
@@ -10,9 +12,6 @@
 #include    "logo/logo_background_5.c"
 #include    "logo/logo_background_6.c"
 #include    "logo/logo_background_7.c"
-
-#include    "title/title_map.c"
-#include    "title/title_tiles.c"
 
 void logoAnimation( void ) {
     set_bkg_data(0,80,LogoTiles);
@@ -28,6 +27,11 @@ void logoAnimation( void ) {
         break;
     }
 }
+
+///////////////////////////////////////////////////////////////////////////
+
+#include    "title/title_map.c"
+#include    "title/title_tiles.c"
 
 void titleScreen( void ) {
     set_bkg_data(0,80,TitleTiles);
@@ -45,15 +49,55 @@ uint8_t game( void ) {
     uint8_t frames  = 60;
     uint8_t lives   = 3;
     uint8_t score   = 0;
-    uint8_t kana    = 0;
     uint8_t highscore = 0;
 
+    uint8_t kana;
+    uint8_t wrong1;
+    uint8_t wrong2;
+    uint8_t wrong3;
+    
+
+    vsync();
+  uint8_t generated = 0;
+
     while(1) {
-        kana++;
-        gotogxy(0,0);   gprintf("TIMER : %d", seconds);
-        gotogxy(11, 0); gprintf("LIVES : %d", lives);
-        gotogxy(0,1);   gprintf("SCORE : %d", score);
-        gotogxy(11,1);  gprintf(" HIGH : %d", highscore);
+        
+
+        while (generated == 0) {
+            initrand(DIV_REG);
+            kana    = ( rand() % 102 ) + 1;
+            wrong1  = ( rand() % 102 ) + 1;
+            wrong2  = ( rand() % 102 ) + 1;
+            wrong3  = ( rand() % 102 ) + 1;
+            uint8_t numbers[] = { kana , wrong1 , wrong2 , wrong3 };
+
+            for (uint8_t i = 0; i < 3; i++) {
+                for (uint8_t j = i + 1; j < 4; j++) {
+                    if (numbers[i] == numbers[j]) {
+                        break;
+                    }
+                }
+            }
+
+
+            generated = 1;
+            
+        }
+            uint8_t numbers[] = { kana , wrong1 , wrong2 , wrong3 };
+
+        gotogxy(6,6);
+        for (uint8_t i = 0; i < 4; i++) {
+            gprintf("%d\n",numbers[i]);
+        }
+
+        gotogxy(0,0);   
+        gprintf("TIMER : %d", seconds);
+        gotogxy(11, 0); 
+        gprintf("LIVES : %d", lives);
+        gotogxy(0,1);   
+        gprintf("SCORE : %d", score);
+        gotogxy(11,1);  
+        gprintf(" HIGH : %d", highscore);
 
         frames --;
         if ( frames == 0 ) {
