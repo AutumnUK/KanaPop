@@ -43,73 +43,102 @@ void titleScreen( void ) {
         return;
     }
 }
+///////////////////////////////////////////////////////////////////////////
+
+// I don't feel like typing this out over and over lol
+// return a number in the range but starting at 1
+// keep a delay in to improve randomness
+uint8_t genNumber(uint8_t range) {
+    initrand(DIV_REG);
+    uint8_t num = (rand() % range) + 1;
+    delay(5);
+    return num;
+}
 
 uint8_t game( void ) {
-    uint8_t seconds = 60;
-    uint8_t frames  = 60;
-    uint8_t lives   = 3;
-    uint8_t score   = 0;
-    uint8_t highscore = 0;
-
+    uint8_t seconds     = 60;
+    uint8_t frames      = 60;
+    uint8_t lives       = 3;
+    uint8_t score       = 0;
+    uint8_t highscore   = 0;
     uint8_t kana;
-    uint8_t wrong1;
+    uint8_t wrong1; 
     uint8_t wrong2;
     uint8_t wrong3;
-    
 
-    vsync();
-  uint8_t generated = 0;
-
+    uint8_t generated   = 0;
+    uint8_t duplicates  = 0;
+    gotogxy(0,0);   gprintf("TIMER : %d", seconds);
+    gotogxy(11, 0); gprintf("LIVES : %d", lives);
+    gotogxy(0,1);   gprintf("SCORE : %d", score);
+    gotogxy(11,1);  gprintf(" HIGH : %d", highscore);
     while(1) {
-        
+        vsync();
 
         while (generated == 0) {
-            initrand(DIV_REG);
-            kana    = ( rand() % 102 ) + 1;
-            wrong1  = ( rand() % 102 ) + 1;
-            wrong2  = ( rand() % 102 ) + 1;
-            wrong3  = ( rand() % 102 ) + 1;
-            uint8_t numbers[] = { kana , wrong1 , wrong2 , wrong3 };
+            duplicates  = 0;
+            kana        = genNumber(103);
+            wrong1      = genNumber(103); 
+            wrong2      = genNumber(103);
+            wrong3      = genNumber(103);
 
+            uint8_t numbers[4];
+                    numbers[0] = kana;
+                    numbers[1] = wrong1;
+                    numbers[2] = wrong2;
+                    numbers[3] = wrong3;
+
+            gotogxy(0,9);
+            gprintf("%d  ",kana);
+            gotogxy(0,10);
+            gprintf("%d  ",numbers[0]);
+            gprintf("%d  ",numbers[1]);
+            gprintf("%d  ",numbers[2]);
+            gprintf("%d  ",numbers[3]);            
+
+            // Fisher-Yates Shuffle
+            for (uint8_t i = 3; i > 0; i--) {
+                uint8_t range           = i;
+                uint8_t swap            = genNumber(range);
+                uint8_t cache           = numbers[i];
+                        numbers[i]      = numbers[swap];
+                        numbers[swap]   = cache;
+            }
+
+            gotogxy(0,11);
+            gprintf("%d  ",numbers[0]);
+            gprintf("%d  ",numbers[1]);
+            gprintf("%d  ",numbers[2]);
+            gprintf("%d  ",numbers[3]);    
+
+            // Check for duplicates. Redo if any are found.
             for (uint8_t i = 0; i < 3; i++) {
-                for (uint8_t j = i + 1; j < 4; j++) {
+                for (uint8_t j = i+1; j < 4; j++) {
                     if (numbers[i] == numbers[j]) {
-                        break;
+                        duplicates = 1;
                     }
                 }
             }
 
 
-            generated = 1;
-            
-        }
-            uint8_t numbers[] = { kana , wrong1 , wrong2 , wrong3 };
-
-        gotogxy(6,6);
-        for (uint8_t i = 0; i < 4; i++) {
-            gprintf("%d\n",numbers[i]);
-        }
-
-        gotogxy(0,0);   
-        gprintf("TIMER : %d", seconds);
-        gotogxy(11, 0); 
-        gprintf("LIVES : %d", lives);
-        gotogxy(0,1);   
-        gprintf("SCORE : %d", score);
-        gotogxy(11,1);  
-        gprintf(" HIGH : %d", highscore);
-
-        frames --;
-        if ( frames == 0 ) {
-            seconds --;
-            frames = 60;
-        }
-
-        if (frames == 0 && seconds == 0) {
-            return 1;
-        }
-
+ 
         
+            if (duplicates == 0) { generated   = 1; }
+        }
+
+        // Timer
+        frames --; 
+        if ( frames == 0 ) { 
+            seconds --; 
+            frames = 60; 
+            gotogxy(0,0);   gprintf("TIMER : %d", seconds);
+        }
+        
+        // Gameover screen followed by results screen should go here.
+        if (frames == 0 && seconds == 0) { 
+            return 1; 
+        }
+
     }
 }
 
