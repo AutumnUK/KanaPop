@@ -45,9 +45,7 @@ void titleScreen( void ) {
 }
 ///////////////////////////////////////////////////////////////////////////
 
-// I don't feel like typing this out over and over lol
-// return a number in the range but starting at 1
-// keep a delay in to improve randomness
+// Return a number from 1 to target value.
 uint8_t genNumber(uint8_t range) {
     initrand(DIV_REG);
     uint8_t num = (rand() % range) + 1;
@@ -61,10 +59,12 @@ uint8_t game( void ) {
     uint8_t lives       = 3;
     uint8_t score       = 0;
     uint8_t highscore   = 0;
-    uint8_t kana;
+    uint8_t kana        = 0;
     uint8_t wrong1; 
     uint8_t wrong2;
     uint8_t wrong3;
+    uint8_t numbers[4];
+    uint8_t userans = 4; // out of range initially
 
     uint8_t generated   = 0;
     uint8_t duplicates  = 0;
@@ -75,6 +75,7 @@ uint8_t game( void ) {
     while(1) {
         vsync();
 
+        // Generate new numbers
         while (generated == 0) {
             duplicates  = 0;
             kana        = genNumber(103);
@@ -82,7 +83,7 @@ uint8_t game( void ) {
             wrong2      = genNumber(103);
             wrong3      = genNumber(103);
 
-            uint8_t numbers[4];
+            
                     numbers[0] = kana;
                     numbers[1] = wrong1;
                     numbers[2] = wrong2;
@@ -94,7 +95,8 @@ uint8_t game( void ) {
             gprintf("%d  ",numbers[0]);
             gprintf("%d  ",numbers[1]);
             gprintf("%d  ",numbers[2]);
-            gprintf("%d  ",numbers[3]);            
+            gprintf("%d  ",numbers[3]);    
+ 
 
             // Fisher-Yates Shuffle
             for (uint8_t i = 3; i > 0; i--) {
@@ -110,6 +112,11 @@ uint8_t game( void ) {
             gprintf("%d  ",numbers[1]);
             gprintf("%d  ",numbers[2]);
             gprintf("%d  ",numbers[3]);    
+
+            gotogxy(0,12);
+            gprintf("U   D   L   R");      
+            
+            
 
             // Check for duplicates. Redo if any are found.
             for (uint8_t i = 0; i < 3; i++) {
@@ -134,6 +141,58 @@ uint8_t game( void ) {
             gotogxy(0,0);   gprintf("TIMER : %d", seconds);
         }
         
+        
+
+        if (numbers[0] == kana) {
+            gotogxy(4,4);
+            gprintf("0");
+        }
+
+        if (numbers[1] == kana) {
+            gotogxy(4,4);
+            gprintf("1");
+        }
+
+        if (numbers[2] == kana) {
+            gotogxy(4,4);
+            gprintf("2");
+        }
+
+        if (numbers[3] == kana) {
+            gotogxy(4,4);
+            gprintf("3");
+        }
+
+        if (joypad() & J_LEFT) {
+            userans = numbers[0];
+
+        }
+
+        if (joypad() & J_RIGHT) {
+            userans = numbers[1];
+
+        }        
+        if (joypad() & J_UP) {
+            userans = numbers[2];
+        }
+
+        if (joypad() & J_DOWN) {
+            userans = numbers[3];
+        }
+
+        if (userans != 4) {
+            if (userans == kana) {
+                score ++;
+                userans = 4;
+                generated = 0;
+            }
+            if (userans != kana) {
+                lives --;
+                userans = 4;
+                generated = 0;
+            }
+        }
+
         // Gameover screen followed by results screen should go here.
         if (frames == 0 && seconds == 0) { 
             return 1; 
