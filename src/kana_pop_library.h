@@ -3,5 +3,5 @@
 #include    "../Tools/GBDK/include/gb/gb.h"
 
 uint8_t genNumber(uint8_t range);
-
+void clear_screen( void );
 #endif

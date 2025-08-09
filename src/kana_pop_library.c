@@ -1,5 +1,6 @@
 #include    "../Tools/GBDK/include/rand.h"
 #include    "../Tools/GBDK/include/gb/gb.h"
+#include    "../Tools/GBDK/include/gb/drawing.h"
 // Returns a number from 0 to the number -1.
 // genNumber(10) = 0 to 9, 10 values
 uint8_t genNumber(uint8_t range) {
@@ -7,4 +8,11 @@ uint8_t genNumber(uint8_t range) {
     uint8_t num = (rand() % range);
     delay(5);
     return num;
+}
+
+void clear_screen( void ) {
+    gotogxy(0,0);
+    for (int i = 0; i < 360; i++ ) {
+        gprintf(" ");
+    }
 }
