@@ -2,20 +2,7 @@
 #include    "../Tools/GBDK/include/gb/drawing.h"
 #include    "kana_pop_library.h"
 
-char[] get_kana_roma(uint8_t input) {
-    switch {
-        case  1 : "a";
-        case  2 : "i";
-        case  3 : "e";
-        case  4 : "o";
-        case  5 : "u";
-        case  6 : "ka";
-        case  7 : "ki";
-        case  8 : "ke";
-        case  9 : "ko";
-        case 10 : "ku";
-    }
-}
+
 
 void draw_static_ui( uint8_t sec, uint8_t liv, uint8_t sco, uint8_t hsc ) {
     gotogxy(0,0);   gprintf("TIMER : %d", sec);
