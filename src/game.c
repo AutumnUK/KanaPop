@@ -2,7 +2,7 @@
 #include    "../Tools/GBDK/include/gb/drawing.h"
 #include    "kana_pop_library.h"
 
-
+struct kana { char romaji[4]; };
 
 void draw_static_ui( uint8_t sec, uint8_t liv, uint8_t sco, uint8_t hsc ) {
     gotogxy(0,0);   gprintf("TIMER : %d", sec);
@@ -20,19 +20,33 @@ uint8_t game( void ) {
     uint8_t kana        = 0;
     uint8_t numbers[4]  = { 0 , 0 , 0 , 0 };
     uint8_t generated   = 0;
-    uint8_t userans     = 255;
-    
+    uint8_t userans     = 47;
+
+    struct kana k[46] = {
+        { "a"   } , { "i"   } , { "u"   } , { "e"   } , { "o"   } ,
+        { "ka"  } , { "ki"  } , { "ku"  } , { "ke"  } , { "ko"  } ,
+        { "sa"  } , { "shi" } , { "su"  } , { "se"  } , { "so"  } ,
+        { "ta"  } , { "chi" } , { "tsu" } , { "te"  } , { "to"  } ,
+        { "na"  } , { "ni"  } , { "nu"  } , { "ne"  } , { "no"  } ,
+        { "ha"  } , { "hi"  } , { "fu"  } , { "he"  } , { "ho"  } ,
+        { "ma"  } , { "mi"  } , { "mu"  } , { "me"  } , { "mo"  } ,
+        { "ya"  } ,             { "yu"  } ,             { "yo"  } ,
+        { "ra"  } , { "ri"  } , { "ru"  } , { "re"  } , { "ro"  } ,
+        { "wa"  } ,                                     { "wo"  } ,
+        { "n"   }
+    };
+
     draw_static_ui(seconds, lives, score, highscore);
 
     while(1) {
         vsync();
         while (generated == 0) {
             uint8_t duplicates  = 0;
-            kana        = genNumber(103);
+            kana       = genNumber(46);
             numbers[0] = kana;
-            numbers[1] = genNumber(103);
-            numbers[2] = genNumber(103);
-            numbers[3] = genNumber(103);
+            numbers[1] = genNumber(46);
+            numbers[2] = genNumber(46);
+            numbers[3] = genNumber(46);
 
             // Check for duplicates. Redo if any are found.
             for (uint8_t i = 0; i < 3; i++) {
@@ -57,11 +71,17 @@ uint8_t game( void ) {
             gotogxy(0,6);   gprintf("Option 3 :    ");
             gotogxy(0,7);   gprintf("Option 4 :    ");
 
-            gotogxy(0,3);   gprintf("     Ans : %d", kana);
-            gotogxy(0,4);   gprintf("    Left : %d", numbers[0]);
-            gotogxy(0,5);   gprintf("   Right : %d", numbers[1]);
-            gotogxy(0,6);   gprintf("      Up : %d", numbers[2]);
-            gotogxy(0,7);   gprintf("    Down : %d", numbers[3]);
+            gotogxy(0,3);   gprintf("     Ans : %s", k[kana].romaji);
+
+            uint8_t num1 = numbers[0];
+            uint8_t num2 = numbers[1];
+            uint8_t num3 = numbers[2];
+            uint8_t num4 = numbers[3];
+            
+            gotogxy(0,4);   gprintf("    Left : %s", k[num1].romaji);
+            gotogxy(0,5);   gprintf("   Right : %s", k[num2].romaji);
+            gotogxy(0,6);   gprintf("      Up : %s", k[num3].romaji);
+            gotogxy(0,7);   gprintf("    Down : %s", k[num4].romaji);
   
             if (duplicates == 0) { generated   = 1; }
         }
@@ -79,29 +99,24 @@ uint8_t game( void ) {
         if (joypad() & J_UP)    { userans = numbers[2]; }
         if (joypad() & J_DOWN)  { userans = numbers[3]; }
 
-
-
-        if (userans != 255) {
+        if (userans != 47) {
             if (userans == kana) {
                 gotogxy(0,1);   gprintf("SCORE : %d", score);
                 score++;
-                userans = 255;
+                userans = 47;
                 generated = 0;
             }
-            if (userans != kana) {
+            else if (userans != kana) {
                 lives --;
                 gotogxy(11, 0); gprintf("LIVES : %d", lives);
-                userans = 255;
+                userans = 47;
                 generated = 0;
             }
         }
 
-        // Gameover screen followed by results screen should go here.
         if (seconds <= 0 || lives == 0) { 
             clear_screen();
             return 0; 
-            
         }
-
     }
 }
