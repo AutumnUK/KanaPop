@@ -9,6 +9,12 @@ void draw_static_ui( uint8_t sec, uint8_t liv, uint8_t sco, uint8_t hsc ) {
     gotogxy(11, 0); gprintf("LIVES : %d", liv);
     gotogxy(0,1);   gprintf("SCORE : %d", sco);
     gotogxy(11,1);  gprintf(" HIGH : %d", hsc);
+
+    gotogxy(0,3);   gprintf("     Ans :    ");
+    gotogxy(0,4);   gprintf("Option 1 :    ");
+    gotogxy(0,5);   gprintf("Option 2 :    ");
+    gotogxy(0,6);   gprintf("Option 3 :    ");
+    gotogxy(0,7);   gprintf("Option 4 :    ");
 }
 
 uint8_t game( void ) {
@@ -20,7 +26,7 @@ uint8_t game( void ) {
     uint8_t kana        = 0;
     uint8_t numbers[4]  = { 0 , 0 , 0 , 0 };
     uint8_t generated   = 0;
-    uint8_t userans     = 47;
+    uint8_t userans     = kana;
 
     struct kana k[46] = {
         { "a"   } , { "i"   } , { "u"   } , { "e"   } , { "o"   } ,
@@ -59,25 +65,18 @@ uint8_t game( void ) {
 
             // Fisher-Yates Shuffle
             for (uint8_t i = 3; i > 0; i--) {
-                uint8_t swap = genNumber(i);  // random number in [0, i]
+                uint8_t swap = genNumber(i)
                 uint8_t temp = numbers[i];
                 numbers[i]   = numbers[swap];
                 numbers[swap]= temp;
             }
-
-            gotogxy(0,3);   gprintf("     Ans :    ");
-            gotogxy(0,4);   gprintf("Option 1 :    ");
-            gotogxy(0,5);   gprintf("Option 2 :    ");
-            gotogxy(0,6);   gprintf("Option 3 :    ");
-            gotogxy(0,7);   gprintf("Option 4 :    ");
-
-            gotogxy(0,3);   gprintf("     Ans : %s", k[kana].romaji);
 
             uint8_t num1 = numbers[0];
             uint8_t num2 = numbers[1];
             uint8_t num3 = numbers[2];
             uint8_t num4 = numbers[3];
             
+            gotogxy(0,3);   gprintf("     Ans : %s", k[kana].romaji);            
             gotogxy(0,4);   gprintf("    Left : %s", k[num1].romaji);
             gotogxy(0,5);   gprintf("   Right : %s", k[num2].romaji);
             gotogxy(0,6);   gprintf("      Up : %s", k[num3].romaji);
