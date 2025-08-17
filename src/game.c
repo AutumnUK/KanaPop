@@ -2,6 +2,7 @@
 #include    "../Tools/GBDK/include/gb/drawing.h"
 #include    "kana_pop_library.h"
 
+
 struct kana { char romaji[4]; };
 
 void draw_static_ui( uint8_t sec, uint8_t liv, uint8_t sco, uint8_t hsc ) {
@@ -9,15 +10,14 @@ void draw_static_ui( uint8_t sec, uint8_t liv, uint8_t sco, uint8_t hsc ) {
     gotogxy(11, 0); gprintf("LIVES : %d", liv);
     gotogxy(0,1);   gprintf("SCORE : %d", sco);
     gotogxy(11,1);  gprintf(" HIGH : %d", hsc);
-
-    gotogxy(0,3);   gprintf("     Ans :    ");
-    gotogxy(0,4);   gprintf("Option 1 :    ");
-    gotogxy(0,5);   gprintf("Option 2 :    ");
-    gotogxy(0,6);   gprintf("Option 3 :    ");
-    gotogxy(0,7);   gprintf("Option 4 :    ");
 }
 
 uint8_t game( void ) {
+
+    HIDE_BKG;
+    
+
+    SHOW_BKG;
     uint8_t seconds     = 60;
     uint8_t frames      = 60;
     uint8_t lives       = 3;
@@ -45,6 +45,8 @@ uint8_t game( void ) {
     draw_static_ui(seconds, lives, score, highscore);
 
     while(1) {
+        set_sprite_tile(0,kana);
+        move_sprite(0,96,40);
         vsync();
         while (generated == 0) {
             uint8_t duplicates  = 0;
@@ -65,7 +67,7 @@ uint8_t game( void ) {
 
             // Fisher-Yates Shuffle
             for (uint8_t i = 3; i > 0; i--) {
-                uint8_t swap = genNumber(i)
+                uint8_t swap = genNumber(i);
                 uint8_t temp = numbers[i];
                 numbers[i]   = numbers[swap];
                 numbers[swap]= temp;
@@ -76,11 +78,17 @@ uint8_t game( void ) {
             uint8_t num3 = numbers[2];
             uint8_t num4 = numbers[3];
             
-            gotogxy(0,3);   gprintf("     Ans : %s", k[kana].romaji);            
-            gotogxy(0,4);   gprintf("    Left : %s", k[num1].romaji);
-            gotogxy(0,5);   gprintf("   Right : %s", k[num2].romaji);
-            gotogxy(0,6);   gprintf("      Up : %s", k[num3].romaji);
-            gotogxy(0,7);   gprintf("    Down : %s", k[num4].romaji);
+            gotogxy(0,3);   gprintf("     Ans :");            
+            gotogxy(0,5);   gprintf("    Left :     ");
+            gotogxy(0,6);   gprintf("   Right :     ");
+            gotogxy(0,7);   gprintf("      Up :     ");
+            gotogxy(0,8);   gprintf("    Down :     ");
+
+            gotogxy(0,3);   gprintf("     Ans :");            
+            gotogxy(0,5);   gprintf("    Left : %s", k[num1].romaji);
+            gotogxy(0,6);   gprintf("   Right : %s", k[num2].romaji);
+            gotogxy(0,7);   gprintf("      Up : %s", k[num3].romaji);
+            gotogxy(0,8);   gprintf("    Down : %s", k[num4].romaji);
   
             if (duplicates == 0) { generated   = 1; }
         }

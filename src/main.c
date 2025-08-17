@@ -5,7 +5,7 @@
 #include    "game.h"
 #include    "title_screen.h"
 #include    "main_menu.h"
-
+#include    "kanapop_tiles.h"
 
 void main(void) { 
 
@@ -13,7 +13,7 @@ void main(void) {
     SHOW_SPRITES;
     SHOW_BKG;
     DISPLAY_ON;   
-    
+    set_sprite_data(0,146,KPTiles);
     logoAnimation();
     titleScreen();
 
