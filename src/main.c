@@ -5,7 +5,8 @@
 #include    "game.h"
 #include    "title_screen.h"
 #include    "main_menu.h"
-#include    "kanapop_tiles.h"
+#include    "logo/logo_tiles.h"
+#include    "logo/logo_background_1.h"
 
 void main(void) { 
 
@@ -13,10 +14,13 @@ void main(void) {
     SHOW_SPRITES;
     SHOW_BKG;
     DISPLAY_ON;   
-    set_sprite_data(0,146,KPTiles);
+    
     logoAnimation();
     titleScreen();
 
+    set_bkg_data(0,80,LogoTiles);
+    set_bkg_tiles(0,0,20,18,LogoBackground1); 
+    
     uint8_t state = 0;
     while(1) {
         switch (state) {

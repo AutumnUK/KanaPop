@@ -1,6 +1,8 @@
 #include    "../Tools/GBDK/include/gb/gb.h"
 #include    "../Tools/GBDK/include/gb/drawing.h"
 #include    "kana_pop_library.h"
+#include    "kanapop_tiles.h"
+
 
 
 struct kana { char romaji[4]; };
@@ -13,11 +15,8 @@ void draw_static_ui( uint8_t sec, uint8_t liv, uint8_t sco, uint8_t hsc ) {
 }
 
 uint8_t game( void ) {
-
-    HIDE_BKG;
     
-
-    SHOW_BKG;
+    set_sprite_data(0,146,KPTiles);
     uint8_t seconds     = 60;
     uint8_t frames      = 60;
     uint8_t lives       = 3;
@@ -42,13 +41,16 @@ uint8_t game( void ) {
         { "n"   }
     };
 
-    draw_static_ui(seconds, lives, score, highscore);
+    
 
+    
     while(1) {
-        set_sprite_tile(0,kana);
-        move_sprite(0,96,40);
+        
+        
         vsync();
         while (generated == 0) {
+            
+            draw_static_ui(seconds, lives, score, highscore);
             uint8_t duplicates  = 0;
             kana       = genNumber(46);
             numbers[0] = kana;
@@ -78,11 +80,12 @@ uint8_t game( void ) {
             uint8_t num3 = numbers[2];
             uint8_t num4 = numbers[3];
             
-            gotogxy(0,3);   gprintf("     Ans :");            
-            gotogxy(0,5);   gprintf("    Left :     ");
-            gotogxy(0,6);   gprintf("   Right :     ");
-            gotogxy(0,7);   gprintf("      Up :     ");
-            gotogxy(0,8);   gprintf("    Down :     ");
+            gotogxy(0,3);   gprintf("     Ans :");        
+            // gotogxy(0,4);   gprintf("                      ");    
+            gotogxy(0,5);   gprintf("    Left :            ");
+            gotogxy(0,6);   gprintf("   Right :            ");
+            gotogxy(0,7);   gprintf("      Up :            ");
+            gotogxy(0,8);   gprintf("    Down :            ");
 
             gotogxy(0,3);   gprintf("     Ans :");            
             gotogxy(0,5);   gprintf("    Left : %s", k[num1].romaji);
@@ -90,10 +93,15 @@ uint8_t game( void ) {
             gotogxy(0,7);   gprintf("      Up : %s", k[num3].romaji);
             gotogxy(0,8);   gprintf("    Down : %s", k[num4].romaji);
   
+
+
             if (duplicates == 0) { generated   = 1; }
         }
 
         // Timer
+
+        set_sprite_tile(0,kana + 100);
+        move_sprite(0,96,40);
         frames --; 
         if ( frames == 0 ) { 
             seconds --; 
